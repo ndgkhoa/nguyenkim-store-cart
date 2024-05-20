@@ -30,7 +30,7 @@ const MenuAndBanner = () => {
     }, [])
     return (
         <div className="container mx-auto">
-            <div className="flex">
+            <div className="flex mt-2">
                 <div className="w-1/4">
                     <CategoryMenu categoryList={categoryList} />
                 </div>

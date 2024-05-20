@@ -1,5 +1,5 @@
 'use client'
-import { PhoneOutlined, ShoppingCartOutlined, UserOutlined, BoxPlotOutlined } from '@ant-design/icons'
+import { PhoneOutlined, ShoppingCartOutlined, UserOutlined, BoxPlotOutlined, RedoOutlined } from '@ant-design/icons'
 import { Input } from 'antd'
 
 const { Search } = Input
@@ -22,7 +22,7 @@ const Header: React.FC = () => {
                         <span className="pl-1">Giỏ hàng</span>
                     </Link>
                     <Link href={'/#'} className="pr-6 flex items-center">
-                        <BoxPlotOutlined style={{ fontSize: '25px' }} />
+                        <RedoOutlined style={{ fontSize: '25px' }} />
                         <span className="pl-1">Đơn hàng</span>
                     </Link>
                     <Link href={'/#'} className="pr-6 flex items-center">

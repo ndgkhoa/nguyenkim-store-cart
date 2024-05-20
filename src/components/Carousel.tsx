@@ -6,14 +6,7 @@ const contentStyle: React.CSSProperties = {
 }
 
 const SlideCarousel: React.FC = () => (
-    <Carousel autoplay style={{ paddingTop: '1rem' }}>
-        <div>
-            <img
-                src="/images/slider/SlideCarousel1.jpg"
-                alt="Slide 1"
-                style={{ ...contentStyle, objectFit: 'cover' }}
-            />
-        </div>
+    <Carousel autoplay>
         <div>
             <img
                 src="/images/slider/SlideCarousel2.jpg"
@@ -31,6 +24,13 @@ const SlideCarousel: React.FC = () => (
         <div>
             <img
                 src="/images/slider/SlideCarousel4.jpg"
+                alt="Slide 1"
+                style={{ ...contentStyle, objectFit: 'cover' }}
+            />
+        </div>
+        <div>
+            <img
+                src="/images/slider/SlideCarousel1.jpg"
                 alt="Slide 1"
                 style={{ ...contentStyle, objectFit: 'cover' }}
             />

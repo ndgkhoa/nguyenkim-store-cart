@@ -1,14 +1,22 @@
 'use client'
+import React, { useContext, useState } from 'react'
 import { PhoneOutlined, ShoppingCartOutlined, UserOutlined, RedoOutlined } from '@ant-design/icons'
-import { Badge, MenuProps } from 'antd'
-import { Dropdown, Space } from 'antd'
+import { Badge, Dropdown, Space } from 'antd'
 import Link from 'next/link'
-import React, { useState } from 'react'
+import { CartContext } from './CartContext'
 import SearchComponent from './SearchForm'
 import UserAvatar from './UserAvatar'
 
 const Header: React.FC = () => {
-    const [user, setUser] = useState<String | null>()
+    const cartContext = useContext(CartContext)
+    const [user, setUser] = useState<any>(null)
+
+    if (!cartContext) {
+        throw new Error('CartContext must be used within a CartProvider')
+    }
+
+    const { cart } = cartContext
+    const cartItemCount = cart.length
 
     const menuItems = [
         {
@@ -50,17 +58,15 @@ const Header: React.FC = () => {
                     <SearchComponent />
                     <div className="flex items-center mx-6">
                         <Link href={'/cart'} className="pr-6 flex items-center">
-                            <Badge count={2} showZero color="orange">
+                            <Badge count={cartItemCount} showZero color="orange">
                                 <ShoppingCartOutlined style={{ fontSize: '25px', color: 'white' }} />
                             </Badge>
                             <span className="pl-1">Giỏ hàng</span>
                         </Link>
-
                         <Link href={'/#'} className="pr-6 flex items-center">
                             <RedoOutlined style={{ fontSize: '25px' }} />
                             <span className="pl-1">Đơn hàng</span>
                         </Link>
-
                         {user ? (
                             <Dropdown menu={{ items: menuItemsLoggedIn }} trigger={['click']} className="pr-4">
                                 <a onClick={(e) => e.preventDefault()} className="cursor-pointer">
@@ -77,7 +83,6 @@ const Header: React.FC = () => {
                                 </a>
                             </Dropdown>
                         )}
-
                         <Link href={'/#'} className="pr-6 flex items-center">
                             <PhoneOutlined style={{ fontSize: '25px' }} />
                             <div className="pl-1">

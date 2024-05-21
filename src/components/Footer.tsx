@@ -1,4 +1,3 @@
-// components/Footer.tsx
 import {
     FacebookOutlined,
     GoogleOutlined,

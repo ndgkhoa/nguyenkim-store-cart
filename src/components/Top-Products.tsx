@@ -47,7 +47,10 @@ const TopProducts = () => {
                                 style={{ width: '100%' }}
                                 cover={<img alt={product.product_name} src={product.image_1} />}
                             >
-                                <Meta title={product.product_name} description={`Price: ${product.price} VND`} />
+                                <Meta
+                                    title={product.product_name}
+                                    description={`Giá: ${product.price.toLocaleString('vi-VN')} VND`}
+                                />
                             </Card>
                         </Link>
                     ))

@@ -66,7 +66,7 @@ const Products = () => {
                                             >
                                                 <Meta
                                                     title={product.product_name}
-                                                    description={`Price: ${product.price} VND`}
+                                                    description={`Giá: ${product.price.toLocaleString('vi-VN')} VND`}
                                                 />
                                             </Card>
                                         </Link>

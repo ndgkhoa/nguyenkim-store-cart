@@ -35,7 +35,7 @@ const SingleProduct = ({ params }: { params: { id: string } }) => {
                             size="large"
                             style={{
                                 borderRadius: '8px',
-                                background: '#fe0000',
+                                background: '#3B82F6',
                                 border: 0,
                                 color: 'white',
                                 fontWeight: 'bold',

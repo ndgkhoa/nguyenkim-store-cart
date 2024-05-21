@@ -15,7 +15,7 @@ const Header: React.FC = () => {
             key: '1',
             label: (
                 <Link href="/register">
-                    <span className="">Đăng ký</span>
+                    <span className="text-base">Đăng ký</span>
                 </Link>
             ),
         },
@@ -23,7 +23,7 @@ const Header: React.FC = () => {
             key: '2',
             label: (
                 <Link href="/login">
-                    <span className="">Đăng nhập</span>
+                    <span className="text-base">Đăng nhập</span>
                 </Link>
             ),
         },
@@ -34,7 +34,7 @@ const Header: React.FC = () => {
             key: '1',
             label: (
                 <Link href="/logout">
-                    <span className="">Thoát</span>
+                    <span className="text-base">Thoát</span>
                 </Link>
             ),
         },

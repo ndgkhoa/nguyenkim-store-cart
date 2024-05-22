@@ -14,17 +14,17 @@ const RootLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [data, setData] = useState<string | null>(null)
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const storedToken = await localStorage.getItem('token')
-                setData(storedToken)
-                if (typeof storedToken === 'string') {
-                    await fetchUserInfo(storedToken)
-                }
-            } catch (error) {}
-        }
         fetchData()
-    }, [])
+    }, [user])
+
+    const fetchData = async () => {
+        try {
+            const storedToken = await localStorage.getItem('token')
+            fetchUserInfo(storedToken as string)
+        } catch (error) {
+            console.error('Fetch data error:', error)
+        }
+    }
 
     const fetchUserInfo = async (token: string) => {
         try {
@@ -47,9 +47,7 @@ const RootLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             console.error('Fetch user info error:', error)
         }
     }
-    if (typeof data === 'string') {
-        console.log(data)
-    }
+
     console.log(user)
 
     const title = typeof metadata.title === 'string' ? metadata.title : ''

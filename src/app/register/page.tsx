@@ -196,7 +196,7 @@ const RegisterPage = () => {
                                 <div className="text-center">
                                     <a
                                         className="inline-block text-sm text-blue-500 align-baseline hover:text-blue-800"
-                                        href="#"
+                                        href="/login"
                                     >
                                         Already have an account? Login!
                                     </a>

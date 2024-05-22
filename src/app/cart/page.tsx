@@ -21,7 +21,7 @@ const Cart = () => {
                 <p className="text-blue-900 text-xl font-extrabold">Giỏ hàng của tôi</p>
                 {cart.map((product: any) => (
                     <div
-                        key={product.id}
+                        key={product.product_id}
                         className="flex flex-col p-4 text-lg font-semibold shadow-md border rounded-sm"
                     >
                         <div className="flex flex-col md:flex-row gap-3 justify-between">
@@ -115,7 +115,6 @@ const Cart = () => {
                     <div className="flex flex-row justify-between">
                         <p className="text-gray-600">Subtotal ({cart.length} sản phẩm)</p>
                         <p className="text-end font-bold">
-                            $
                             {cart
                                 .reduce((total: any, product: any) => total + product.price * product.quantity, 0)
                                 .toLocaleString('vi-VN')}{' '}
@@ -158,7 +157,7 @@ const Cart = () => {
                             Thanh toán
                         </button>
                         <button
-                            onClick={() => {}}
+                            onClick={() => (window.location.href = '/')}
                             className="transition-colors text-sm bg-white border border-gray-600 p-2 rounded-sm w-full text-gray-700 text-hover shadow-md"
                         >
                             Xem thêm sản phẩm khác

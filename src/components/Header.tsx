@@ -1,5 +1,6 @@
 'use client'
-import React, { useContext, useState } from 'react'
+
+import React, { useContext } from 'react'
 import { PhoneOutlined, ShoppingCartOutlined, UserOutlined, RedoOutlined } from '@ant-design/icons'
 import { Badge, Dropdown, Space } from 'antd'
 import Link from 'next/link'
@@ -7,10 +8,12 @@ import { CartContext } from './CartContext'
 import SearchComponent from './SearchForm'
 import UserAvatar from './UserAvatar'
 
-const Header: React.FC = () => {
-    const cartContext = useContext(CartContext)
-    const [user, setUser] = useState<any>(null)
+interface HeaderProps {
+    user: any
+}
 
+const Header: React.FC<HeaderProps> = ({ user }) => {
+    const cartContext = useContext(CartContext)
     if (!cartContext) {
         throw new Error('CartContext must be used within a CartProvider')
     }

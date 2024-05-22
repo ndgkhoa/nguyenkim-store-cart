@@ -11,23 +11,15 @@ const inter = Inter({ subsets: ['latin'] })
 
 const RootLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<any>(null)
-    const [data, setData] = useState<string | null>(null)
 
     useEffect(() => {
-        fetchData()
-    }, [user])
+        fetchUserInfo()
+    }, [])
 
-    const fetchData = async () => {
+    const fetchUserInfo = async () => {
         try {
-            const storedToken = await localStorage.getItem('token')
-            fetchUserInfo(storedToken as string)
-        } catch (error) {
-            console.error('Fetch data error:', error)
-        }
-    }
-
-    const fetchUserInfo = async (token: string) => {
-        try {
+            const storedToken = ((await localStorage.getItem('token')) as string) || ''
+            const token = storedToken.replace(/^"|"$/g, '')
             const response = await fetch('https://nguyenkim-be.onrender.com/v2/customer/', {
                 method: 'GET',
                 headers: {
@@ -40,15 +32,12 @@ const RootLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             if (!response || !response.ok) {
                 throw new Error('Failed to fetch user info')
             }
-
             const userData = await response.json()
             setUser(userData.data)
         } catch (error) {
             console.error('Fetch user info error:', error)
         }
     }
-
-    console.log(user)
 
     const title = typeof metadata.title === 'string' ? metadata.title : ''
 

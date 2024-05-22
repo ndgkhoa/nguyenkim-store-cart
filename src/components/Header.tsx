@@ -4,22 +4,31 @@ import React, { useContext } from 'react'
 import { PhoneOutlined, ShoppingCartOutlined, UserOutlined, RedoOutlined } from '@ant-design/icons'
 import { Badge, Dropdown, Space } from 'antd'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { CartContext } from './CartContext'
 import SearchComponent from './SearchForm'
 import UserAvatar from './UserAvatar'
 
 interface HeaderProps {
     user: any
+    setUser: (user: any) => void
 }
 
-const Header: React.FC<HeaderProps> = ({ user }) => {
+const Header: React.FC<HeaderProps> = ({ user, setUser }) => {
     const cartContext = useContext(CartContext)
+    const router = useRouter()
     if (!cartContext) {
         throw new Error('CartContext must be used within a CartProvider')
     }
 
     const { cart } = cartContext
     const cartItemCount = cart.length
+
+    const handleLogout = () => {
+        localStorage.removeItem('token')
+        setUser(null)
+        router.push('/')
+    }
 
     const menuItems = [
         {
@@ -44,9 +53,9 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
         {
             key: '1',
             label: (
-                <Link href="/logout">
-                    <span className="text-base">Thoát</span>
-                </Link>
+                <span className="text-base cursor-pointer" onClick={handleLogout}>
+                    Thoát
+                </span>
             ),
         },
     ]

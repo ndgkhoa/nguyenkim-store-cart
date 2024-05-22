@@ -51,7 +51,7 @@ const RootLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             </head>
             <body className={inter.className}>
                 <CartProvider>
-                    <Header user={user} />
+                    <Header user={user} setUser={setUser} />
                     {children}
                     <Footer />
                 </CartProvider>

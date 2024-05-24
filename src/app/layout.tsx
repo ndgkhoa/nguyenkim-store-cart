@@ -38,7 +38,6 @@ const RootLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             console.error('Fetch user info error:', error)
         }
     }
-    console.log(user)
 
     const title = typeof metadata.title === 'string' ? metadata.title : ''
 

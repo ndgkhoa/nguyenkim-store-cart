@@ -3,10 +3,9 @@
 import { PhoneOutlined, ShoppingCartOutlined, UserOutlined, RedoOutlined } from '@ant-design/icons'
 import { Badge, Dropdown, Space } from 'antd'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import SearchComponent from './SearchForm'
 import UserAvatar from './UserAvatar'
-import { useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
 
 interface HeaderProps {
     user: any
@@ -15,12 +14,11 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ user, setUser }) => {
-    const router = useRouter()
 
     const handleLogout = () => {
         localStorage.removeItem('token')
         setUser(null)
-        router.push('/')
+        toast.success('Bạn đã đăng xuất tài khoản')
     }
 
     const menuItems = [

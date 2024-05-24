@@ -3,12 +3,9 @@
 import PaymentButton from '@/components/PaymentButton'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
-import { useRouter } from 'next/navigation'
 
 const Cart = () => {
     const [cart, setCart] = useState<any>([])
-    const [data, setData] = useState<any>()
-    const router = useRouter()
 
     const today = new Date()
     const futureDate = new Date(today)
@@ -48,10 +45,9 @@ const Cart = () => {
                 },
             })
             const data = await response.json()
-            setData(data)
             if (response.ok) {
                 toast.success('Xóa sản phẩm khỏi giỏ hàng thành công')
-                //router.push('/cart')
+                window.location.reload()
             } else {
                 toast.error('Lỗi khi xóa sản phẩm khỏi giỏ hàng:')
             }
@@ -59,13 +55,38 @@ const Cart = () => {
             console.error('Lỗi khi gửi yêu cầu xóa sản phẩm khỏi giỏ hàng:', error)
         }
     }
-    console.log(data)
+
+    const handleQuantityChange = async (id: number, quantity: number) => {
+        try {
+            const token = localStorage.getItem('token')
+            const response = await fetch(`https://nguyenkim-be.onrender.com/v2/cart/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    quantity: quantity,
+                }),
+            })
+            const data = await response.json()
+            if (response.ok) {
+                toast.success('Cập nhật giỏ hàng thành công')
+                window.location.reload()
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const totalPrice = cart?.reduce((sum: number, item: any) => sum + item.product.price * item.quantity, 0)
+    console.log(totalPrice)
 
     return (
         <div className="flex flex-col md:flex-row w-screen h-full px-14 py-7">
             <div className="w-full md:w-2/3 flex flex-col h-fit gap-4 p-4">
                 <p className="text-blue-900 text-xl font-extrabold">Giỏ hàng của tôi</p>
-                {cart.map((product: any) => (
+                {cart?.map((product: any) => (
                     <div
                         key={product.product.product_id}
                         className="flex flex-col p-4 text-lg font-semibold shadow-md border rounded-sm"
@@ -87,7 +108,12 @@ const Cart = () => {
                             </div>
                             <div className="self-center text-center">
                                 <p className="text-gray-800 font-normal text-xl">
-                                    {product.product.price.toLocaleString('vi-VN')} VND
+                                    <p>
+                                        {product.product.price.toLocaleString('vi-VN', {
+                                            style: 'currency',
+                                            currency: 'VND',
+                                        })}
+                                    </p>
                                 </p>
                             </div>
                             <div className="self-center">
@@ -114,7 +140,7 @@ const Cart = () => {
                         </div>
                         <div className="flex flex-row self-center gap-1">
                             <button
-                                //onClick={() => handleQuantityChange(product.product_id, product.quantity - 1)}
+                                onClick={() => handleQuantityChange(product.cart_id, product.cart_quantity - 1)}
                                 className="w-5 h-5 self-center rounded-full border border-gray-300"
                             >
                                 <svg
@@ -136,7 +162,7 @@ const Cart = () => {
                                 className="w-8 h-8 text-center text-gray-900 text-sm outline-none border border-gray-300 rounded-sm"
                             />
                             <button
-                                //onClick={() => handleQuantityChange(product.product_id, product.quantity + 1)}
+                                onClick={() => handleQuantityChange(product.cart_id, product.cart_quantity + 1)}
                                 className="w-5 h-5 self-center rounded-full border border-gray-300"
                             >
                                 <svg
@@ -159,14 +185,9 @@ const Cart = () => {
                 <p className="text-blue-900 text-xl font-extrabold">Hóa đơn</p>
                 <div className="flex flex-col p-4 gap-4 text-lg font-semibold shadow-md border rounded-sm">
                     <div className="flex flex-row justify-between">
-                        <p className="text-gray-600">Subtotal ({cart.length} sản phẩm)</p>
+                        <p className="text-gray-600">Subtotal ({cart?.length} sản phẩm)</p>
                         <p className="text-end font-bold">
-                            {cart
-                                .reduce(
-                                    (total: any, product: any) => total + product.product.price * product.cart_quantity,
-                                    0,
-                                )
-                                .toLocaleString('vi-VN')}{' '}
+                            {totalPrice?.toLocaleString('vi-VN')}
                             VND
                         </p>
                     </div>
@@ -190,14 +211,7 @@ const Cart = () => {
                         <p className="text-gray-600">Total</p>
                         <div>
                             <p className="text-end font-bold">
-                                $
-                                {cart
-                                    .reduce(
-                                        (total: any, product: any) =>
-                                            total + product.product.price * product.cart_quantity + 35000,
-                                        0,
-                                    )
-                                    .toLocaleString('vi-VN')}{' '}
+                                {(totalPrice + 35000)?.toLocaleString('vi-VN')}
                                 VND
                             </p>
                         </div>

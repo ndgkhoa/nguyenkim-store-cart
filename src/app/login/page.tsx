@@ -33,6 +33,7 @@ const Login = () => {
             }
             const { data } = await response.json()
             localStorage.setItem('token', data.token)
+            //window.location.reload()
             toast.success('Đăng nhập thành công')
             router.push('/')
         } catch (error) {

@@ -3,9 +3,10 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-import { CartProvider } from '@/components/CartContext'
 import React, { useState, useEffect } from 'react'
 import { metadata } from './metadata'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -18,8 +19,7 @@ const RootLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
     const fetchUserInfo = async () => {
         try {
-            const storedToken = ((await localStorage.getItem('token')) as string) || ''
-            const token = storedToken.replace(/^"|"$/g, '')
+            const token = localStorage.getItem('token')
             const response = await fetch('https://nguyenkim-be.onrender.com/v2/customer/', {
                 method: 'GET',
                 headers: {
@@ -38,6 +38,7 @@ const RootLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             console.error('Fetch user info error:', error)
         }
     }
+    console.log(user)
 
     const title = typeof metadata.title === 'string' ? metadata.title : ''
 
@@ -50,11 +51,21 @@ const RootLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 <meta name="description" content={metadata.description || ''} />
             </head>
             <body className={inter.className}>
-                <CartProvider>
-                    <Header user={user} setUser={setUser} />
-                    {children}
-                    <Footer />
-                </CartProvider>
+                <Header user={user} setUser={setUser} />
+                {children}
+                <ToastContainer
+                    position="bottom-right"
+                    autoClose={5000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                    theme="light"
+                />
+                <Footer />
             </body>
         </html>
     )

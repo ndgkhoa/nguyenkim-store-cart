@@ -1,19 +1,65 @@
 'use client'
-import React, { useContext } from 'react'
-import { CartContext } from '@/components/CartContext'
+
+import PaymentButton from '@/components/PaymentButton'
+import { useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
+import { useRouter } from 'next/navigation'
 
 const Cart = () => {
+    const [cart, setCart] = useState<any>([])
+    const [data, setData] = useState<any>()
+    const router = useRouter()
+
     const today = new Date()
     const futureDate = new Date(today)
     futureDate.setDate(futureDate.getDate() + 3)
     const options: Intl.DateTimeFormatOptions = { day: '2-digit', month: 'short' }
     const formattedDate = futureDate.toLocaleDateString('vi-VN', options)
 
-    const { cart, removeFromCart, updateQuantity } = useContext(CartContext)
+    useEffect(() => {
+        const fetchCart = async () => {
+            try {
+                const token = localStorage.getItem('token')
+                const response = await fetch('https://nguyenkim-be.onrender.com/v2/cart/', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                        Accept: 'application/json, text/plain, */*',
+                    },
+                })
+                const data = await response.json()
+                setCart(data.data)
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        fetchCart()
+    }, [])
 
-    const handleQuantityChange = (productId: any, newQuantity: any) => {
-        updateQuantity(productId, newQuantity)
+    const removeFromCart = async (id: number) => {
+        try {
+            const token = localStorage.getItem('token')
+            const response = await fetch(`https://nguyenkim-be.onrender.com/v2/cart/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+            const data = await response.json()
+            setData(data)
+            if (response.ok) {
+                toast.success('Xóa sản phẩm khỏi giỏ hàng thành công')
+                //router.push('/cart')
+            } else {
+                toast.error('Lỗi khi xóa sản phẩm khỏi giỏ hàng:')
+            }
+        } catch (error) {
+            console.error('Lỗi khi gửi yêu cầu xóa sản phẩm khỏi giỏ hàng:', error)
+        }
     }
+    console.log(data)
 
     return (
         <div className="flex flex-col md:flex-row w-screen h-full px-14 py-7">
@@ -21,31 +67,31 @@ const Cart = () => {
                 <p className="text-blue-900 text-xl font-extrabold">Giỏ hàng của tôi</p>
                 {cart.map((product: any) => (
                     <div
-                        key={product.product_id}
+                        key={product.product.product_id}
                         className="flex flex-col p-4 text-lg font-semibold shadow-md border rounded-sm"
                     >
                         <div className="flex flex-col md:flex-row gap-3 justify-between">
                             <div className="flex flex-row gap-6 items-center">
                                 <div className="w-28 h-28">
-                                    <img className="w-full h-full" src={product.image_1} alt={product.product_name} />
+                                    <img
+                                        className="w-full h-full"
+                                        src={product.product.image}
+                                        alt={product.product.product_name}
+                                    />
                                 </div>
                                 <div className="flex flex-col gap-1">
-                                    <p className="text-lg text-gray-800 font-semibold">{product.product_name}</p>
-                                    <p className="text-xs text-gray-600 font-semibold">
-                                        Danh mục: <span className="font-normal">{product.category.category_name}</span>
-                                    </p>
-                                    <p className="text-xs text-gray-600 font-semibold">
-                                        Thương hiệu: <span className="font-normal">{product.brand.brand_name}</span>
+                                    <p className="text-lg text-gray-800 font-semibold">
+                                        {product.product.product_name}
                                     </p>
                                 </div>
                             </div>
                             <div className="self-center text-center">
                                 <p className="text-gray-800 font-normal text-xl">
-                                    {product.price.toLocaleString('vi-VN')} VND
+                                    {product.product.price.toLocaleString('vi-VN')} VND
                                 </p>
                             </div>
                             <div className="self-center">
-                                <button onClick={() => removeFromCart(product.product_id)}>
+                                <button onClick={() => removeFromCart(product.cart_id)}>
                                     <svg
                                         height="32px"
                                         width="32px"
@@ -68,7 +114,7 @@ const Cart = () => {
                         </div>
                         <div className="flex flex-row self-center gap-1">
                             <button
-                                onClick={() => handleQuantityChange(product.product_id, product.quantity - 1)}
+                                //onClick={() => handleQuantityChange(product.product_id, product.quantity - 1)}
                                 className="w-5 h-5 self-center rounded-full border border-gray-300"
                             >
                                 <svg
@@ -86,11 +132,11 @@ const Cart = () => {
                             <input
                                 type="text"
                                 readOnly
-                                value={product.quantity}
+                                value={product.cart_quantity}
                                 className="w-8 h-8 text-center text-gray-900 text-sm outline-none border border-gray-300 rounded-sm"
                             />
                             <button
-                                onClick={() => handleQuantityChange(product.product_id, product.quantity + 1)}
+                                //onClick={() => handleQuantityChange(product.product_id, product.quantity + 1)}
                                 className="w-5 h-5 self-center rounded-full border border-gray-300"
                             >
                                 <svg
@@ -116,7 +162,10 @@ const Cart = () => {
                         <p className="text-gray-600">Subtotal ({cart.length} sản phẩm)</p>
                         <p className="text-end font-bold">
                             {cart
-                                .reduce((total: any, product: any) => total + product.price * product.quantity, 0)
+                                .reduce(
+                                    (total: any, product: any) => total + product.product.price * product.cart_quantity,
+                                    0,
+                                )
                                 .toLocaleString('vi-VN')}{' '}
                             VND
                         </p>
@@ -144,7 +193,8 @@ const Cart = () => {
                                 $
                                 {cart
                                     .reduce(
-                                        (total: any, product: any) => total + product.price * product.quantity + 35000,
+                                        (total: any, product: any) =>
+                                            total + product.product.price * product.cart_quantity + 35000,
                                         0,
                                     )
                                     .toLocaleString('vi-VN')}{' '}
@@ -153,9 +203,7 @@ const Cart = () => {
                         </div>
                     </div>
                     <div className="flex gap-2">
-                        <button className="transition-colors text-sm bg-blue-600 hover:bg-blue-700 p-2 rounded-sm w-full text-white text-hover shadow-md">
-                            Thanh toán
-                        </button>
+                        <PaymentButton />
                         <button
                             onClick={() => (window.location.href = '/')}
                             className="transition-colors text-sm bg-white border border-gray-600 p-2 rounded-sm w-full text-gray-700 text-hover shadow-md"
@@ -168,5 +216,4 @@ const Cart = () => {
         </div>
     )
 }
-
 export default Cart

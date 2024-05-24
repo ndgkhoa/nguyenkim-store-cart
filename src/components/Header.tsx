@@ -1,28 +1,21 @@
 'use client'
 
-import React, { useContext } from 'react'
 import { PhoneOutlined, ShoppingCartOutlined, UserOutlined, RedoOutlined } from '@ant-design/icons'
 import { Badge, Dropdown, Space } from 'antd'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { CartContext } from './CartContext'
 import SearchComponent from './SearchForm'
 import UserAvatar from './UserAvatar'
+import { useEffect, useState } from 'react'
 
 interface HeaderProps {
     user: any
     setUser: (user: any) => void
+    //cartItemCount: number
 }
 
 const Header: React.FC<HeaderProps> = ({ user, setUser }) => {
-    const cartContext = useContext(CartContext)
     const router = useRouter()
-    if (!cartContext) {
-        throw new Error('CartContext must be used within a CartProvider')
-    }
-
-    const { cart } = cartContext
-    const cartItemCount = cart.length
 
     const handleLogout = () => {
         localStorage.removeItem('token')
@@ -70,7 +63,7 @@ const Header: React.FC<HeaderProps> = ({ user, setUser }) => {
                     <SearchComponent />
                     <div className="flex items-center mx-6">
                         <Link href={'/cart'} className="pr-6 flex items-center">
-                            <Badge count={cartItemCount} showZero color="orange">
+                            <Badge showZero color="orange">
                                 <ShoppingCartOutlined style={{ fontSize: '25px', color: 'white' }} />
                             </Badge>
                             <span className="pl-1">Giỏ hàng</span>

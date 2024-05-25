@@ -1,10 +1,15 @@
-// PaymentButton.tsx
 import React, { useState } from 'react'
+import { toast } from 'react-toastify'
+import { useRouter } from 'next/navigation'
 
-const PaymentButton: React.FC = () => {
+interface props {
+    totalPrice: number
+}
+
+const PaymentButton: React.FC<props> = ({ totalPrice }) => {
+    const router = useRouter()
     const [isVisible, setIsVisible] = useState(false)
     const [isFadingOut, setIsFadingOut] = useState(false)
-    const [totalPrice, setTotalPrice] = useState('')
     const [orderAddress, setOrderAddress] = useState('')
     const [paymentMethod, setPaymentMethod] = useState('')
 
@@ -22,10 +27,13 @@ const PaymentButton: React.FC = () => {
 
     const handlePayment = async () => {
         try {
-            const response = await fetch('https://nguyenkim-be.onrender.com/v2/customer/payment', {
+            const token = localStorage.getItem('token')
+            const response = await fetch('https://nguyenkim-be.onrender.com/v2/cart/payment', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    Accept: 'application/json, text/plain, */*',
+                    Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({
                     total_price: totalPrice,
@@ -33,16 +41,16 @@ const PaymentButton: React.FC = () => {
                     payment_method: paymentMethod,
                 }),
             })
-
+            const data = await response.json()
             if (response.ok) {
-                alert('Payment Successful!')
+                toast.success(`${data.message}`)
                 closeModal()
+                router.refresh()
             } else {
-                const errorData = await response.json()
-                alert(`Payment Failed: ${errorData.message}`)
+                toast.error(`${data.message}`)
             }
         } catch (error) {
-            alert('Payment Error!')
+            toast.error('Payment Error!')
         }
     }
 
@@ -91,7 +99,6 @@ const PaymentButton: React.FC = () => {
                                             type="text"
                                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                             value={totalPrice}
-                                            onChange={(e) => setTotalPrice(e.target.value)}
                                         />
                                     </div>
                                     <div>
@@ -116,13 +123,15 @@ const PaymentButton: React.FC = () => {
                                         >
                                             Phương thức thanh toán
                                         </label>
-                                        <input
+                                        <select
                                             id="paymentMethod"
-                                            type="text"
                                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                             value={paymentMethod}
                                             onChange={(e) => setPaymentMethod(e.target.value)}
-                                        />
+                                        >
+                                            <option value="cash">Thanh toán tiền mặt</option>
+                                            <option value="bankTransfer">Chuyển khoản</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>

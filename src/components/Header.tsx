@@ -6,19 +6,23 @@ import Link from 'next/link'
 import SearchComponent from './SearchForm'
 import UserAvatar from './UserAvatar'
 import { toast } from 'react-toastify'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
-interface HeaderProps {
-    user: any
-    setUser: (user: any) => void
-    //cartItemCount: number
-}
-
-const Header: React.FC<HeaderProps> = ({ user, setUser }) => {
+const Header = () => {
+    const [token, setToken] = useState<string | null>(null)
+    const router = useRouter()
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            setToken(localStorage.getItem('token'))
+        }
+    }, [])
 
     const handleLogout = () => {
         localStorage.removeItem('token')
-        setUser(null)
         toast.success('Bạn đã đăng xuất tài khoản')
+        setToken(null)
+        //router.refresh()
     }
 
     const menuItems = [
@@ -49,6 +53,14 @@ const Header: React.FC<HeaderProps> = ({ user, setUser }) => {
                 </span>
             ),
         },
+        {
+            key: '2',
+            label: (
+                <Link href="/changePass">
+                    <span className="text-base">Thay đổi mật khẩu</span>
+                </Link>
+            ),
+        },
     ]
 
     return (
@@ -70,7 +82,7 @@ const Header: React.FC<HeaderProps> = ({ user, setUser }) => {
                             <RedoOutlined style={{ fontSize: '25px' }} />
                             <span className="pl-1">Đơn hàng</span>
                         </Link>
-                        {user ? (
+                        {token ? (
                             <Dropdown menu={{ items: menuItemsLoggedIn }} trigger={['click']} className="pr-4">
                                 <a onClick={(e) => e.preventDefault()} className="cursor-pointer">
                                     <UserAvatar />

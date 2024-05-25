@@ -3,9 +3,12 @@
 import PaymentButton from '@/components/PaymentButton'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
+import { useRouter } from 'next/navigation'
 
 const Cart = () => {
+    const router = useRouter()
     const [cart, setCart] = useState<any>([])
+    const [totalPrice, setTotalPrice] = useState<number>(0)
 
     const today = new Date()
     const futureDate = new Date(today)
@@ -34,6 +37,14 @@ const Cart = () => {
         fetchCart()
     }, [])
 
+    useEffect(() => {
+        const calculatedTotalPrice = cart?.reduce(
+            (sum: number, item: any) => sum + item.product.price * item.cart_quantity,
+            0,
+        )
+        setTotalPrice(calculatedTotalPrice)
+    }, [cart])
+
     const removeFromCart = async (id: number) => {
         try {
             const token = localStorage.getItem('token')
@@ -44,10 +55,9 @@ const Cart = () => {
                     Authorization: `Bearer ${token}`,
                 },
             })
-            const data = await response.json()
             if (response.ok) {
                 toast.success('Xóa sản phẩm khỏi giỏ hàng thành công')
-                window.location.reload()
+                router.refresh()
             } else {
                 toast.error('Lỗi khi xóa sản phẩm khỏi giỏ hàng:')
             }
@@ -69,18 +79,14 @@ const Cart = () => {
                     quantity: quantity,
                 }),
             })
-            const data = await response.json()
             if (response.ok) {
                 toast.success('Cập nhật giỏ hàng thành công')
-                window.location.reload()
+                //router.refresh()
             }
         } catch (error) {
             console.log(error)
         }
     }
-
-    const totalPrice = cart?.reduce((sum: number, item: any) => sum + item.product.price * item.quantity, 0)
-    console.log(totalPrice)
 
     return (
         <div className="flex flex-col md:flex-row w-screen h-full px-14 py-7">
@@ -217,7 +223,7 @@ const Cart = () => {
                         </div>
                     </div>
                     <div className="flex gap-2">
-                        <PaymentButton />
+                        <PaymentButton totalPrice={totalPrice} />
                         <button
                             onClick={() => (window.location.href = '/')}
                             className="transition-colors text-sm bg-white border border-gray-600 p-2 rounded-sm w-full text-gray-700 text-hover shadow-md"

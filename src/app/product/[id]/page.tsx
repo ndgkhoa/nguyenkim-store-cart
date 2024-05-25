@@ -1,6 +1,5 @@
 'use client'
 
-import Header from '@/components/Header'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
@@ -8,7 +7,6 @@ import { toast } from 'react-toastify'
 const SingleProduct = ({ params }: { params: { id: string } }) => {
     const router = useRouter()
     const [singleProduct, setSingleProduct] = useState<any>(null)
-    const [cartItemCount, setCartItemCount] = useState<number>(0)
 
     useEffect(() => {
         const fetchData = async () => {
@@ -33,7 +31,6 @@ const SingleProduct = ({ params }: { params: { id: string } }) => {
 
         if (!token) {
             toast.error('Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng')
-            setCartItemCount((prevCount) => prevCount + 1)
             router.push('/login')
             return
         }

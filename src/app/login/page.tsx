@@ -1,12 +1,13 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
 
 const Login = () => {
     const [formData, setFormData] = useState({ email: '', password: '' })
     const router = useRouter()
+
     const handleChange = (e: any) => {
         const { name, value } = e.target
         setFormData((prevState) => ({
@@ -31,13 +32,13 @@ const Login = () => {
             if (!response.ok) {
                 throw new Error('Login failed')
             }
-            const { data } = await response.json()
+            const data = await response.json()
             localStorage.setItem('token', data.token)
-            //window.location.reload()
             toast.success('Đăng nhập thành công')
+            //router.refresh()
             router.push('/')
         } catch (error) {
-            console.error('Login error:', error)
+            toast.error('Mật khẩu không đúng')
         }
     }
 
